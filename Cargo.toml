@@ -1,0 +1,10 @@
+[package]
+name = "r-projects"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[dependencies]
+colored = "2.0"
+clap = "3.0"
+dotenv = "0.15"
