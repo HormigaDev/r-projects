@@ -37,6 +37,10 @@ pub mod cli {
                 "bot-template-ts",
                 "git@github.com:HormigaDev/bot-template.git",
             ),
+            (
+                "nest-api-template",
+                "git@github.com:HormigaDev/nest-api-template.git",
+            ),
         ])
     }
 }
