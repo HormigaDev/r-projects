@@ -8,7 +8,7 @@ use std::process::{exit, Command, ExitStatus};
 pub fn template(id: &str, name: &str) {
     let templates = get_templates();
 
-    if let Some(ssh) = templates.get(id) {
+    if let Some((ssh, language)) = templates.get(id) {
         let mut args = ["clone", ssh, name];
         if name.is_empty() {
             args = ["clone", ssh, id];
@@ -32,30 +32,32 @@ pub fn template(id: &str, name: &str) {
                 println!("{}", "Eliminado el directorio .git".yellow());
                 if run_command("git", &["init", project_dir]).success() {
                     println!("{}", "Inicializado el repositorio".green());
-                    let cargo_toml_path = format!("{}/Cargo.toml", project_dir);
-                    match replace_in_file(&cargo_toml_path, "cli-template", project_dir) {
-                        Ok(_) => {}
-                        Err(e) => {
-                            eprintln!(
-                                "{} {}",
-                                "Ocurrió un error al escribir en el archivo Cargo.toml:".red(),
-                                e
-                            );
-                            exit(1);
-                        }
-                    };
-                    let main_path = format!("{}/src/main.rs", project_dir);
-                    match replace_in_file(&main_path, "app-name", project_dir) {
-                        Ok(_) => {}
-                        Err(e) => {
-                            eprintln!(
-                                "{} {}",
-                                "Ocurrió un error al escribir en el archivo main.rs:".red(),
-                                e
-                            );
-                            exit(1);
-                        }
-                    };
+                    if language == &"rust" {
+                        let cargo_toml_path = format!("{}/Cargo.toml", project_dir);
+                        match replace_in_file(&cargo_toml_path, "cli-template", project_dir) {
+                            Ok(_) => {}
+                            Err(e) => {
+                                eprintln!(
+                                    "{} {}",
+                                    "Ocurrió un error al escribir en el archivo Cargo.toml:".red(),
+                                    e
+                                );
+                                exit(1);
+                            }
+                        };
+                        let main_path = format!("{}/src/main.rs", project_dir);
+                        match replace_in_file(&main_path, "app-name", project_dir) {
+                            Ok(_) => {}
+                            Err(e) => {
+                                eprintln!(
+                                    "{} {}",
+                                    "Ocurrió un error al escribir en el archivo main.rs:".red(),
+                                    e
+                                );
+                                exit(1);
+                            }
+                        };
+                    }
                 } else {
                     eprintln!(
                         "{}",

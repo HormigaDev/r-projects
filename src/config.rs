@@ -30,16 +30,22 @@ pub mod cli {
         ]
     }
 
-    pub fn get_templates() -> HashMap<&'static str, &'static str> {
+    pub fn get_templates() -> HashMap<&'static str, (&'static str, &'static str)> {
         HashMap::from([
-            ("cli-template", "git@github.com:HormigaDev/cli-template.git"),
+            (
+                "cli-template",
+                ("git@github.com:HormigaDev/cli-template.git", "rust"),
+            ),
             (
                 "bot-template-ts",
-                "git@github.com:HormigaDev/bot-template.git",
+                ("git@github.com:HormigaDev/bot-template.git", "typescript"),
             ),
             (
                 "nest-api-template",
-                "git@github.com:HormigaDev/nest-api-template.git",
+                (
+                    "git@github.com:HormigaDev/nest-api-template.git",
+                    "typescript",
+                ),
             ),
         ])
     }
