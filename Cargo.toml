@@ -3,8 +3,19 @@ name = "r-projects"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
+description = "Descripción breve de tu binario o proyecto"
+repository = "https://github.com/usuario/mi-binario"
+homepage = "https://mi-binario.ejemplo.com"
+documentation = "https://docs.rs/mi-binario"
+readme = "README.md"
+keywords = ["cli", "tools"]
+categories = ["command-line-utilities"]
 
 [dependencies]
 colored = "2.0"
 clap = "3.0"
 dotenv = "0.15"
+
+[[bin]]
+name = "r-projects"
+path = "src/main.rs"
