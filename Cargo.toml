@@ -1,6 +1,6 @@
 [package]
 name = "r-projects"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 license = "MIT"
 description = "Descripción breve de tu binario o proyecto"
@@ -15,6 +15,10 @@ categories = ["command-line-utilities"]
 colored = "2.0"
 clap = "3.0"
 dotenv = "0.15"
+reqwest = { version = "0.11", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+tokio = { version = "1", features = ["full"] }
+dirs = "4.0"
 
 [[bin]]
 name = "r-projects"

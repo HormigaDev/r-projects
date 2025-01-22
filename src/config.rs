@@ -11,21 +11,35 @@ pub mod cli {
         const REQUIRED: bool = true;
         const OPTIONAL: bool = false;
         const TAKES: bool = true;
-        // const NOTAKES: bool = false;
+        const NOTAKES: bool = false;
 
         vec![
             (
                 "template",
                 "Este comando clona una de todas las plantillas disponibles con el nombre identificador especificado",
                 vec![
-                    ("identifier", 'i', REQUIRED, TAKES),
+                    ("repo", 'r', REQUIRED, TAKES),
+                    ("user", 'u', OPTIONAL, TAKES),
                     ("name", 'n', OPTIONAL, TAKES),
+                    ("keep", 'k', OPTIONAL, NOTAKES),
+                    ("nokeep", 'K', OPTIONAL, NOTAKES),
                 ]
             ),
             (
                 "list",
                 "Este comando lista todas las plantillas disponibles para clonar",
-                vec![]
+                vec![
+                    ("user", 'u', OPTIONAL, TAKES),
+                ]
+            ),
+            (
+                "config",
+                "Este comando permite editar las configuraciones del CLI",
+                vec![
+                    ("key", 'k', REQUIRED, TAKES),
+                    ("value", 'v', REQUIRED, TAKES),
+                    ("list", 'l', OPTIONAL, NOTAKES),
+                ]
             )
         ]
     }
@@ -48,5 +62,9 @@ pub mod cli {
                 ),
             ),
         ])
+    }
+
+    pub fn get_configs() -> [&'static str; 3] {
+        ["default.user", "default.keep", "auth.token"]
     }
 }

@@ -1,63 +1,34 @@
-use crate::config::cli::get_templates;
 use colored::*;
-use std::fs::{self, File};
-use std::io::{Read, Result, Write};
-use std::path::Path;
+use std::fs;
 use std::process::{exit, Command, ExitStatus};
 
-pub fn template(id: &str, name: &str) {
-    let templates = get_templates();
+pub fn template(user: &str, repository_name: &str, name: &str, remove_git: bool) {
+    let repo_url = format!("git@github.com:{}/{}.git", user, repository_name);
+    let folder_name = if name.is_empty() {
+        repository_name
+    } else {
+        name
+    };
 
-    if let Some((ssh, language)) = templates.get(id) {
-        let mut args = ["clone", ssh, name];
-        if name.is_empty() {
-            args = ["clone", ssh, id];
-        }
-        if run_command("git", &args).success() {
-            println!(
-                "{}",
-                "La plantilla ha sido descargada correctamente".green()
-            );
+    // Clonamos el repositorio
+    let args = ["clone", &repo_url, folder_name];
+    if run_command("git", &args).success() {
+        println!(
+            "{}",
+            "La plantilla ha sido descargada correctamente".green()
+        );
 
-            #[allow(unused_assignments)]
-            let mut project_dir = "";
-            if name.is_empty() {
-                project_dir = id;
-            } else {
-                project_dir = name;
-            }
+        // Si remove_git es false, eliminamos el directorio .git
+        if !remove_git {
+            let git_dir = format!("{}/.git", folder_name);
 
-            let git_dir = format!("{}/.git", project_dir);
+            // Eliminamos el directorio .git
             if fs::remove_dir_all(&git_dir).is_ok() {
                 println!("{}", "Eliminado el directorio .git".yellow());
-                if run_command("git", &["init", project_dir]).success() {
+
+                // Inicializamos un nuevo repositorio
+                if run_command("git", &["init", folder_name]).success() {
                     println!("{}", "Inicializado el repositorio".green());
-                    if language == &"rust" {
-                        let cargo_toml_path = format!("{}/Cargo.toml", project_dir);
-                        match replace_in_file(&cargo_toml_path, "cli-template", project_dir) {
-                            Ok(_) => {}
-                            Err(e) => {
-                                eprintln!(
-                                    "{} {}",
-                                    "Ocurrió un error al escribir en el archivo Cargo.toml:".red(),
-                                    e
-                                );
-                                exit(1);
-                            }
-                        };
-                        let main_path = format!("{}/src/main.rs", project_dir);
-                        match replace_in_file(&main_path, "app-name", project_dir) {
-                            Ok(_) => {}
-                            Err(e) => {
-                                eprintln!(
-                                    "{} {}",
-                                    "Ocurrió un error al escribir en el archivo main.rs:".red(),
-                                    e
-                                );
-                                exit(1);
-                            }
-                        };
-                    }
                 } else {
                     eprintln!(
                         "{}",
@@ -76,11 +47,7 @@ pub fn template(id: &str, name: &str) {
     } else {
         eprintln!(
             "{}",
-            format!(
-                "La plantilla con el ID '{}' no existe o no está disponible",
-                id
-            )
-            .red()
+            format!("Error al clonar el repositorio '{}'", repository_name).red()
         );
         exit(1);
     }
@@ -98,21 +65,4 @@ fn run_command(command: &str, args: &[&str]) -> ExitStatus {
             exit(1);
         }
     }
-}
-
-fn replace_in_file(file_path: &str, target: &str, replacement: &str) -> Result<()> {
-    let path = Path::new(file_path);
-
-    // Leer el contenido del archivo
-    let mut content = String::new();
-    File::open(&path)?.read_to_string(&mut content)?;
-
-    // Reemplazar el texto
-    let new_content = content.replace(target, replacement);
-
-    // Escribir el contenido actualizado de vuelta al archivo
-    let mut file = File::create(&path)?;
-    file.write_all(new_content.as_bytes())?;
-
-    Ok(())
 }

@@ -4,11 +4,13 @@ use dotenv::dotenv;
 mod commands;
 mod config;
 mod handler;
+mod load_configs;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     dotenv().ok();
     let mut matches = App::new("r-projects")
-        .version("0.1.0")
+        .version("0.1.1")
         .author("HormigaDev <hormigadev7@gmail.com>")
         .about("Un CLI para clonar rapidamente las plantillas de proyectos personales mas comunes");
 
@@ -32,5 +34,5 @@ fn main() {
     }
 
     let matches = matches.get_matches();
-    handler::execute(matches);
+    handler::execute(matches).await;
 }
