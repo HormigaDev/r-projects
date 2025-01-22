@@ -22,14 +22,35 @@ async fn fetch_repositories(user: &str) -> Result<Vec<Repository>, Error> {
     Ok(response)
 }
 
-pub async fn list(user: &str) {
+pub async fn list(user: &str, filter: &str) {
     if !user.is_empty() {
         println!("{}", "Buscando repositorios...".yellow());
         match fetch_repositories(user).await {
-            Ok(repos) => {
+            Ok(mut repos) => {
+                if !filter.is_empty() {
+                    repos.retain(|repo| repo.name.contains(filter));
+                }
+
+                if repos.is_empty() {
+                    println!(
+                        "{}",
+                        "No se encontraron repositorios que coincidan con el filtro.".red()
+                    );
+                    return;
+                }
+
                 println!(
                     "{}",
-                    format!("Repositorios públicos del usuario '{}':", user).bright_blue()
+                    format!(
+                        "Repositorios del usuario '{}'{}:",
+                        user,
+                        if filter.is_empty() {
+                            " públicos"
+                        } else {
+                            " filtrados"
+                        }
+                    )
+                    .bright_blue()
                 );
                 for repo in repos {
                     println!("{} - {}", repo.name.yellow(), repo.html_url.bright_green());

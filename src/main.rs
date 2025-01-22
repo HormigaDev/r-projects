@@ -10,7 +10,7 @@ mod load_configs;
 async fn main() {
     dotenv().ok();
     let mut matches = App::new("r-projects")
-        .version("0.1.1")
+        .version("0.1.2")
         .author("HormigaDev <hormigadev7@gmail.com>")
         .about("Un CLI para clonar rapidamente las plantillas de proyectos personales mas comunes");
 

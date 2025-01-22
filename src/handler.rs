@@ -52,7 +52,9 @@ pub async fn execute(matches: ArgMatches) {
                 .value_of("user")
                 .unwrap_or_else(|| &default_user)
                 .trim();
-            commands::list(user).await;
+            let filter = sub_matches.value_of("filter").unwrap_or_else(|| "").trim();
+
+            commands::list(user, filter).await;
         }
         Some(("config", sub_matches)) => {
             let key = sub_matches

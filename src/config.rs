@@ -30,6 +30,7 @@ pub mod cli {
                 "Este comando lista todas las plantillas disponibles para clonar",
                 vec![
                     ("user", 'u', OPTIONAL, TAKES),
+                    ("filter", 'f', OPTIONAL, TAKES),
                 ]
             ),
             (
